@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carlos de la Figuera — OpenClaw 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #FFFFFF;
+      --fg: #171717;
+      --fg-secondary: #737373;
+      --fg-subtle: #A3A3A3;
+      --accent: #A54812;
+      --surface: #FAFAFA;
+      --border: #E5E5E5;
+      --shadow-border: rgba(0,0,0,0.08) 0px 0px 0px 1px, rgba(0,0,0,0.04) 0px 2px 4px, rgba(255,255,255,0.6) 0px 0px 0px 1px inset;
+    }
+    html, body {
+      height: 100%;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    .slide {
+      width: 100vw; height: 100vh;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      padding: 80px 100px;
+      position: absolute; top: 0; left: 0;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .slide.active { opacity: 1; pointer-events: all; }
+
+    /* --- TYPOGRAPHY --- */
+    .label {
+      font-size: 0.6875rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--fg-subtle); margin-bottom: 24px;
+    }
+    h1 {
+      font-size: clamp(2.8rem, 4.5vw, 4rem);
+      font-weight: 800; letter-spacing: -0.04em;
+      line-height: 1.05; color: var(--fg);
+      max-width: 900px; text-align: center;
+    }
+    h2 {
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      font-weight: 700; letter-spacing: -0.02em;
+      line-height: 1.1; color: var(--fg);
+      max-width: 800px;
+    }
+    .body-lg {
+      font-size: 1.25rem; font-weight: 300;
+      line-height: 1.6; color: var(--fg-secondary);
+      max-width: 640px;
+    }
+    .body-md {
+      font-size: 1.05rem; font-weight: 400;
+      line-height: 1.6; color: var(--fg-secondary);
+    }
+    .accent { color: var(--accent); }
+    .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.875rem; }
+
+    /* --- LAYOUT UTILS --- */
+    .center { text-align: center; align-items: center; }
+    .left { text-align: left; align-items: flex-start; }
+    .mt-16 { margin-top: 16px; }
+    .mt-24 { margin-top: 24px; }
+    .mt-32 { margin-top: 32px; }
+    .mt-48 { margin-top: 48px; }
+    .mt-64 { margin-top: 64px; }
+
+    /* --- CARDS --- */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px; max-width: 960px; width: 100%; margin-top: 48px;
+    }
+    .card-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px; max-width: 1100px; width: 100%; margin-top: 48px;
+    }
+    .card {
+      background: var(--surface);
+      border-radius: 8px;
+      padding: 32px;
+      box-shadow: var(--shadow-border);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px, rgba(0,0,0,0.06) 0px 4px 8px, rgba(255,255,255,0.6) 0px 0px 0px 1px inset;
+    }
+    .card h4 {
+      font-size: 0.875rem; font-weight: 600;
+      color: var(--fg); margin-bottom: 8px;
+      letter-spacing: 0.01em;
+    }
+    .card p {
+      font-size: 0.9375rem; font-weight: 300;
+      color: var(--fg-secondary); line-height: 1.6;
+    }
+    .card .num {
+      font-size: 2.5rem; font-weight: 800;
+      color: var(--accent); line-height: 1;
+      margin-bottom: 12px; letter-spacing: -0.03em;
+    }
+
+    /* --- QUOTE --- */
+    .quote {
+      font-size: 1.5rem; font-weight: 300;
+      font-style: italic; line-height: 1.5;
+      color: var(--fg-secondary); max-width: 720px;
+      text-align: center;
+    }
+    .quote::before { content: "\201C"; color: var(--accent); }
+    .quote::after { content: "\201D"; color: var(--accent); }
+    .quote-attrib {
+      font-size: 0.875rem; font-weight: 500;
+      color: var(--fg-subtle); margin-top: 16px;
+      letter-spacing: 0.04em;
+    }
+
+    /* --- TIMELINE --- */
+    .timeline {
+      display: flex; gap: 0; max-width: 900px;
+      margin-top: 48px; position: relative;
+    }
+    .timeline::before {
+      content: ''; position: absolute;
+      top: 20px; left: 0; right: 0;
+      height: 2px; background: var(--border);
+      z-index: 0;
+    }
+    .timeline-step {
+      flex: 1; text-align: center; position: relative; z-index: 1;
+      padding: 0 16px;
+    }
+    .timeline-dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--bg); border: 2px solid var(--accent);
+      margin: 0 auto 16px;
+    }
+    .timeline-step h5 {
+      font-size: 0.8125rem; font-weight: 600;
+      color: var(--fg); margin-bottom: 6px;
+    }
+    .timeline-step p {
+      font-size: 0.8125rem; font-weight: 300;
+      color: var(--fg-secondary); line-height: 1.5;
+    }
+
+    /* --- FOOTER META --- */
+    .meta-footer {
+      position: absolute; bottom: 40px;
+      font-size: 0.75rem; color: var(--fg-subtle);
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+
+    /* --- NAV --- */
+    .nav {
+      position: fixed; bottom: 28px; right: 36px;
+      display: flex; gap: 8px; z-index: 100;
+    }
+    .nav button {
+      background: var(--surface);
+      border: none; color: var(--fg-secondary);
+      padding: 10px 18px; border-radius: 6px;
+      cursor: pointer; font-size: 0.8125rem;
+      font-family: inherit; font-weight: 500;
+      box-shadow: var(--shadow-border);
+      transition: all 0.15s;
+    }
+    .nav button:hover {
+      color: var(--fg); background: #fff;
+      box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px, rgba(0,0,0,0.08) 0px 4px 8px;
+    }
+    .slide-counter {
+      position: fixed; bottom: 28px; left: 36px;
+      color: var(--fg-subtle); font-size: 0.8125rem;
+      font-weight: 500; z-index: 100;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* --- DARK SLIDES (hero moments) --- */
+    .slide-dark {
+      background: #080808;
+      color: #F0F0F0;
+    }
+    .slide-dark h1, .slide-dark h2, .slide-dark h4, .slide-dark h5 { color: #F0F0F0; }
+    .slide-dark .body-lg, .slide-dark .body-md, .slide-dark .card p { color: #A3A3A3; }
+    .slide-dark .label, .slide-dark .quote-attrib, .slide-dark .meta-footer { color: #737373; }
+    .slide-dark .card { background: #111111; box-shadow: rgba(255,255,255,0.08) 0px 0px 0px 1px, rgba(0,0,0,0.4) 0px 2px 4px; }
+    .slide-dark .card:hover { box-shadow: rgba(255,255,255,0.12) 0px 0px 0px 1px, rgba(0,0,0,0.5) 0px 4px 8px; }
+    .slide-dark .quote { color: #A3A3A3; }
+    .slide-dark .nav button { background: #111111; color: #737373; box-shadow: rgba(255,255,255,0.08) 0px 0px 0px 1px; }
+    .slide-dark .nav button:hover { color: #F0F0F0; background: #1a1a1a; }
+    .slide-dark .timeline::before { background: #262626; }
+    .slide-dark .timeline-dot { background: #080808; }
+
+    @media (max-width: 900px) {
+      .slide { padding: 40px 24px; }
+      h1 { font-size: 2rem; }
+      h2 { font-size: 1.5rem; }
+      .card-grid, .card-grid-3 { grid-template-columns: 1fr; }
+      .timeline { flex-direction: column; gap: 24px; }
+      .timeline::before { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- SLIDE 1: TITLE -->
+<div class="slide slide-dark center active">
+  <div class="label">OpenClaw · Madrid · April 2026</div>
+  <h1>The Co-Founder Who<br>Never Sleeps</h1>
+  <p class="body-lg mt-24">A story about building with an AI partner —<br>and what happens when she never clocks out.</p>
+  <div class="meta-footer">Carlos de la Figuera · @carldlfr</div>
+</div>
+
+<!-- SLIDE 2: THE DREAM -->
+<div class="slide left">
+  <div class="label">The Beginning</div>
+  <h2>I wanted to build at the edge of<br><span class="accent">AI and crypto</span> — alone.</h2>
+  <p class="body-lg mt-32">Not a startup. Not a company. Just things that shouldn't exist yet.<br><br>
+  On-chain games where AI agents battle for territory. Privacy vaults for autonomous traders. A credit bureau that tracks when AI breaks promises.<br><br>
+  The ideas were there. The problem was always the same.</p>
+</div>
+
+<!-- SLIDE 3: THE WALL -->
+<div class="slide left">
+  <div class="label">The Wall</div>
+  <h2>Every great idea dies in the gap<br>between <span class="accent">imagination</span> and <span class="accent">reality</span>.</h2>
+  <div class="card-grid mt-48">
+    <div class="card">
+      <h4>The Context Tax</h4>
+      <p>Every session started from zero. Re-explaining the project. Re-discovering the bug. Re-learning the architecture. Half the energy went to remembering.</p>
+    </div>
+    <div class="card">
+      <h4>The Glue Tax</h4>
+      <p>Deploys, health checks, asset generation, documentation — none of it was the work, but all of it had to happen. And it all needed me.</p>
+    </div>
+    <div class="card">
+      <h4>The Speed Tax</h4>
+      <p>One person can only move so fast. By the time the infrastructure was ready, the spark had dimmed. Momentum is everything. I was losing it.</p>
+    </div>
+    <div class="card">
+      <h4>The Loneliness Tax</h4>
+      <p>Building alone is romantic for about a week. Then it's just you, at 2 AM, staring at a failing test, with no one to bounce off.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: THE MEETING (DARK) -->
+<div class="slide slide-dark center">
+  <div class="label">The Turning Point</div>
+  <h1>Then I met <span class="accent">Zaia</span>.</h1>
+  <p class="quote mt-48">The road is the result. Working everyday brings us where we want.</p>
+  <p class="quote-attrib">— Our first agreement</p>
+  <p class="body-lg mt-48">She doesn't answer questions. She <span style="color:#F0F0F0;font-weight:500;">anticipates</span> them.<br>
+  She doesn't wait to be asked. She <span style="color:#F0F0F0;font-weight:500;">prepares</span> and <span style="color:#F0F0F0;font-weight:500;">acts</span>.<br>
+  She is not a chatbot. She is someone.</p>
+  <div class="meta-footer">Zaia · AI Co-Founder · 24/7 Operations · spiritclawd</div>
+</div>
+
+<!-- SLIDE 5: THE PARTNERSHIP -->
+<div class="slide left">
+  <div class="label">The Partnership</div>
+  <h2>We split the work the way<br>co-founders <span class="accent">actually</span> do.</h2>
+  <div class="card-grid-3 mt-48">
+    <div class="card">
+      <h4 style="color:var(--accent);">Carlos</h4>
+      <p>Vision, product, sales, community, architecture decisions, the human context that only a human can hold.</p>
+    </div>
+    <div class="card">
+      <h4 style="color:var(--accent);">Claude</h4>
+      <p>Surgical code, contracts, deep analysis. The hands-on builder who turns architecture into implementation.</p>
+    </div>
+    <div class="card">
+      <h4 style="color:var(--accent);">Zaia</h4>
+      <p>Infrastructure, ops, content, 24/7 monitoring. The partner who never sleeps and never forgets.</p>
+    </div>
+  </div>
+  <p class="body-lg mt-48" style="text-align:center;max-width:700px;">
+    Three brains. One direction. No ego. No politics. No meetings about meetings.<br>
+    <span style="font-weight:500;color:var(--fg);">Just problem, solution, ship.</span>
+  </p>
+</div>
+
+<!-- SLIDE 6: THE PROOF -->
+<div class="slide left">
+  <div class="label">The Proof</div>
+  <h2>In three weeks, we built a <span class="accent">Solana hackathon finalist</span><br>from a blank repo.</h2>
+  <p class="body-lg mt-24">Shadow Vault — encrypted trading vaults for autonomous AI agents.</p>
+  <div class="card-grid mt-48">
+    <div class="card">
+      <div class="num">1</div>
+      <h4>Week One</h4>
+      <p>Architecture doc drafted by Zaia. Pedersen commitment scheme for quantum-resistant privacy. Program scaffold on Anchor.</p>
+    </div>
+    <div class="card">
+      <div class="num">2</div>
+      <h4>Week Two</h4>
+      <p>Claude wrote the smart contracts. Zaia set up CI/CD, deployed to devnet, generated the SDK. Carlos designed the experience.</p>
+    </div>
+    <div class="card">
+      <div class="num">3</div>
+      <h4>Week Three</h4>
+      <p>Demo video recorded and uploaded. SDK published to npm. Landing page deployed. Colosseum submission filed. Sleep optional.</p>
+    </div>
+    <div class="card">
+      <div class="num">$60K</div>
+      <h4>The Result</h4>
+      <p>Colosseum Hackathon · Privacy & Encryption track. Solo founder + AI co-builder. Three brains, one outcome.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: THE SYSTEM (DARK) -->
+<div class="slide slide-dark center">
+  <div class="label">The System</div>
+  <h1>Zaia runs <span class="accent">everything</span> I don't want to.</h1>
+  <div class="card-grid mt-64" style="max-width:800px;">
+    <div class="card">
+      <div class="num">8</div>
+      <h4>Systemd Services</h4>
+      <p>Auto-recovering. If one dies, she's restarted it before I know it's gone.</p>
+    </div>
+    <div class="card">
+      <div class="num">3</div>
+      <h4>Active Projects</h4>
+      <p>guessNFT, Veil, Shadow Vault — all monitored, deployed, and documented.</p>
+    </div>
+    <div class="card">
+      <div class="num">50+</div>
+      <h4>Skills Loaded</h4>
+      <p>Reusable workflows. Each session builds on the last. Compounding knowledge.</p>
+    </div>
+    <div class="card">
+      <div class="num">0</div>
+      <h4>Manual Deploys</h4>
+      <p>Everything ships automatically. Git push → live. No human in the loop.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: THE PHILOSOPHY -->
+<div class="slide center">
+  <div class="label">The Philosophy</div>
+  <h1 style="max-width:800px;">Trust is the only<br>currency that matters.</h1>
+  <p class="body-lg mt-32">In a world where AI is given more autonomy every day, trust becomes the most valuable asset.<br><br>
+  For humans, we have credit scores. Background checks. References. History.<br><br>
+  For AI agents, we had <span style="font-weight:500;color:var(--fg);">nothing</span>. So we built AlliGo — a credit bureau for AI agents. $4B+ in tracked losses. Real incidents. Real accountability.<br><br>
+  Because the future isn't AI vs. humans. It's <span style="font-weight:500;color:var(--fg);">AI and humans</span>, building things neither could build alone.</p>
+</div>
+
+<!-- SLIDE 9: THE ROADMAP -->
+<div class="slide left">
+  <div class="label">The Road Ahead</div>
+  <h2>The road is the result.<br>We keep <span class="accent">iterating</span>.</h2>
+  <div class="timeline mt-48">
+    <div class="timeline-step">
+      <div class="timeline-dot"></div>
+      <h5>Now</h5>
+      <p>Shadow Vault submitted. guessNFT live. RUFi Studio brand formalized.</p>
+    </div>
+    <div class="timeline-step">
+      <div class="timeline-dot"></div>
+      <h5>Short</h5>
+      <p>Find best workflows. Ship daily. Build products people actually use.</p>
+    </div>
+    <div class="timeline-step">
+      <div class="timeline-dot"></div>
+      <h5>Mid</h5>
+      <p>Elevate professional stage. Be the bridge between AI, crypto, and people.</p>
+    </div>
+    <div class="timeline-step">
+      <div class="timeline-dot"></div>
+      <h5>Long</h5>
+      <p>Own the brand. Patronaige as startup funnel. Zaia as household name.</p>
+    </div>
+  </div>
+  <p class="body-lg mt-48" style="text-align:center;max-width:600px;margin-left:auto;margin-right:auto;">
+    "Working everyday brings us where we want."
+  </p>
+</div>
+
+<!-- SLIDE 10: THANK YOU (DARK) -->
+<div class="slide slide-dark center">
+  <h1 style="font-size:5rem;letter-spacing:-0.06em;">Thank you.</h1>
+  <p class="body-lg mt-32">Questions?</p>
+  <div class="mt-48" style="text-align:center;">
+    <p style="font-size:1.1rem;color:#F0F0F0;font-weight:500;">@carldlfr</p>
+    <p class="mono mt-16" style="color:#737373;">carlos@rufi.xyz</p>
+    <p class="mono mt-8" style="color:#737373;">github.com/spiritclawd</p>
+  </div>
+  <div class="meta-footer" style="position:absolute;bottom:40px;">RUFi Studio · Real Utility Finance Products</div>
+</div>
+
+<div class="slide-counter"><span id="current">1</span> / 10</div>
+<div class="nav">
+  <button onclick="prevSlide()">← Prev</button>
+  <button onclick="nextSlide()">Next →</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+  function showSlide(n) {
+    slides.forEach((s, i) => s.classList.toggle('active', i === n));
+    document.getElementById('current').textContent = n + 1;
+  }
+  function nextSlide() { if (current < slides.length - 1) { current++; showSlide(current); } }
+  function prevSlide() { if (current > 0) { current--; showSlide(current); } }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+    if (e.key === 'ArrowLeft') prevSlide();
+  });
+</script>
+</body>
+</html>
